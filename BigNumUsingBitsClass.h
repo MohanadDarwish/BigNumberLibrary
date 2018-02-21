@@ -1,0 +1,59 @@
+#pragma once
+#include <string>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+typedef enum {	
+	divsion = 0,
+	modulus
+}operation;
+
+class BigNumberUsingBits
+{
+public:
+	vector<int> number_vector;
+
+private:
+	vector<int> binary_vector;
+	string BigNumberStr;
+	bool negative_sign = false;
+
+public:
+	BigNumberUsingBits();
+	BigNumberUsingBits(string number_string);
+	BigNumberUsingBits(const BigNumberUsingBits& obj);
+	~BigNumberUsingBits();
+	
+	BigNumberUsingBits Add(const BigNumberUsingBits&num1, const BigNumberUsingBits&num2);
+	BigNumberUsingBits operator+(const BigNumberUsingBits & num2 );
+	
+	BigNumberUsingBits Sub(const BigNumberUsingBits&num1, const BigNumberUsingBits&num2);
+	BigNumberUsingBits operator-(const BigNumberUsingBits & num2);
+	
+	BigNumberUsingBits Mul(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
+	BigNumberUsingBits operator*(const BigNumberUsingBits & num2);
+	
+	BigNumberUsingBits Div(const BigNumberUsingBits&num1, const BigNumberUsingBits&num2);
+	BigNumberUsingBits operator/(const BigNumberUsingBits & num2);
+	
+	BigNumberUsingBits Mod(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
+	BigNumberUsingBits operator%(const BigNumberUsingBits & num2);
+	
+	//Print function reverse the vector so we can see the value in the correct order M in L 2(10)
+	void Print_number_in_binary();
+	int LongDivsion(vector<int>& int_array, vector<int>& quotient, int divisor);
+
+private:
+	//convert the string to int array and return the size of the int_array
+	size_t Convert_String_to_Int_vector(string number_str, vector<int>& int_array);
+	void Convert_int_vector_to_binary_vector(vector<int>& int_array, vector<int>& bin_array);
+	int Divide_int_vector_by_two(vector<int>& int_array, vector<int>& bin_array);
+	bool Isgreater(BigNumberUsingBits& num1, BigNumberUsingBits& num2);
+	bool IsGreaterOrEqual(BigNumberUsingBits & num1, BigNumberUsingBits & num2);
+	BigNumberUsingBits Div_Mod(const BigNumberUsingBits& num1, const BigNumberUsingBits & num2, operation mode);
+	bool Check_vector_all_zeros(vector<int>& vec_under_test);
+	
+};
