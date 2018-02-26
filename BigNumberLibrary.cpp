@@ -3,7 +3,6 @@
 //***** This is a demo on how to use the library and the outputs ******//
 
 #include "stdafx.h"
-#include "Log.h"
 #include "BigNumUsingBitsClass.h"
 #include <string>
 #include <iostream>
@@ -15,26 +14,8 @@ int main()
 	//system("Color 0A");	//light green F Black B
 	system("Color 0B");		//light cyan F Black B
 	//system("Color 09");	//light blue F Black B
-	
-#ifdef TEST_CODE
-	BigNumber a;
-	Log print;
-	print.SetLevel(none);
-	print.Debug_L0("Debug level0", 0);
-	print.Debug_L1("Debug level1", 1);
-	print.Debug_L2("Debug level2", 2);
-	print.Warning("Warning", 3);
-	print.Error("Error", 4);
-	while (1)
-	{
-		cout << "Please enter 2 big numbers to be added: " << endl;
-		cin >> n1 >> n2;
-		cout << "Result of invoking Add(a,b): " << a.Add(n1, n2) << endl;
-	}
-#endif // TEST_CODE
-/////////////////////////////////////
-#ifdef BIG_NUMBER_VECTOR
-string str, str1,str2;
+
+	string str, str1,str2;
 	vector<int> digit_array;
 	vector<int> digit_array2;
 	vector<int> result;
@@ -60,7 +41,7 @@ string str, str1,str2;
 	BigNumberUsingBits res9;
 	BigNumberUsingBits res10;
 	BigNumberUsingBits res11;
-	
+
 	n1.Print_number_in_binary();
 	n2.Print_number_in_binary();
 	cout << "result of addition :" << endl;
@@ -113,7 +94,5 @@ string str, str1,str2;
 	cout << "n1.ToString(): " << n1.ToString() << endl;
 	//
 	cout << "n1.ToDecimal(): " << n1.ToDecimal() << endl;
-	
-#endif
     return 0;
 }
