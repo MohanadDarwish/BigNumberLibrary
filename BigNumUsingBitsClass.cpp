@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "BigNumUsingBitsClass.h"
-#include <algorithm>
+//#include <algorithm>
 
 BigNumberUsingBits::BigNumberUsingBits()
 {
@@ -23,13 +23,116 @@ BigNumberUsingBits::BigNumberUsingBits(const BigNumberUsingBits& obj)
 BigNumberUsingBits::BigNumberUsingBits(string number_string)
 {
 	this->BigNumberStr = number_string;
-	this->Convert_String_to_Int_vector(number_string, number_vector);
-	this->Convert_int_vector_to_binary_vector(number_vector, binary_vector);
+	this->Convert_String_to_Int_vector();
+	this->Convert_int_vector_to_binary_vector();
 }
 BigNumberUsingBits::~BigNumberUsingBits()
 {
 }
 
+BigNumberUsingBits BigNumberUsingBits::operator+(const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits result;
+	result = result.Add(*this, num2);
+	return result;
+}
+
+BigNumberUsingBits BigNumberUsingBits::operator-(const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits result;
+	result = result.Sub(*this, num2);
+	return result;
+}
+
+BigNumberUsingBits BigNumberUsingBits::operator*(const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits result;
+	result = result.Mul(*this, num2);
+	return result;
+}
+
+BigNumberUsingBits BigNumberUsingBits::operator/(const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits result;
+	result = result.Div(*this, num2);
+	return result;
+}
+
+BigNumberUsingBits BigNumberUsingBits::operator%(const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits result;
+	result = result.Mod(*this, num2);
+	return result;
+}
+
+bool BigNumberUsingBits::operator>(const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits result;
+	bool comparison_result;
+
+	comparison_result = result.GreaterOnly(*this, num2);
+	return comparison_result;
+}
+
+bool BigNumberUsingBits::operator==(const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits result;
+	bool equality_result;
+	equality_result = result.IsEqual(*this, num2);
+	return equality_result;
+}
+
+bool BigNumberUsingBits::GreaterOnly( const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)
+{
+	bool greater_only = false;
+	size_t j = num2.binary_vector.size() - 1;
+
+	//check on size
+	if (num1.binary_vector.size() > num2.binary_vector.size())
+	{
+		greater_only = true;
+	}
+	else if (num1.binary_vector.size() == num2.binary_vector.size())
+	{
+		for (j = num1.binary_vector.size(); j > 0; j--)
+		{
+			if (num1.binary_vector[j - 1] > num2.binary_vector[j - 1])
+			{
+				greater_only = true;
+				break;
+			}
+			else if (num1.binary_vector[j - 1] < num2.binary_vector[j - 1])
+			{
+				break;
+			}
+		}
+	}
+	return greater_only;
+}
+
+bool BigNumberUsingBits::IsEqual(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)
+{
+	bool is_equal = true;
+	size_t j = num2.binary_vector.size() - 1;
+
+	//check on size
+	if (num1.binary_vector.size() == num2.binary_vector.size())
+	{
+		for (j = num1.binary_vector.size(); j > 0; j--)
+		{
+			if (num1.binary_vector[j - 1] != num2.binary_vector[j - 1])
+			{
+				is_equal = false;
+				break;
+			}
+		}
+	}
+	else
+	{
+		is_equal = false;
+	}
+	return is_equal;
+}
 //result caclculated in Add not-reveresed Most in Least
 BigNumberUsingBits BigNumberUsingBits::Add(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)//, BigNumberUsingBits & result)
 {
@@ -63,41 +166,6 @@ BigNumberUsingBits BigNumberUsingBits::Add(const BigNumberUsingBits & num1, cons
 		result.binary_vector.insert(result.binary_vector.begin(), carry);
 	}
 	reverse(result.binary_vector.begin(), result.binary_vector.end());
-	return result;
-}
-
-BigNumberUsingBits BigNumberUsingBits::operator+( const BigNumberUsingBits & num2)
-{
-	BigNumberUsingBits result;
-	result = result.Add(*this, num2);
-	return result;
-}
-
-BigNumberUsingBits BigNumberUsingBits::operator-(const BigNumberUsingBits & num2)
-{
-	BigNumberUsingBits result;
-	result = result.Sub(*this, num2);
-	return result;
-}
-
-BigNumberUsingBits BigNumberUsingBits::operator*(const BigNumberUsingBits & num2)
-{
-	BigNumberUsingBits result;
-	result = result.Mul(*this, num2);
-	return result;
-}
-
-BigNumberUsingBits BigNumberUsingBits::operator/(const BigNumberUsingBits & num2)
-{
-	BigNumberUsingBits result;
-	result = result.Div(*this, num2);
-	return result;
-}
-
-BigNumberUsingBits BigNumberUsingBits::operator%(const BigNumberUsingBits & num2)
-{
-	BigNumberUsingBits result;
-	result = result.Mod(*this, num2);
 	return result;
 }
 
@@ -196,21 +264,21 @@ BigNumberUsingBits BigNumberUsingBits::Mod(const BigNumberUsingBits & num1, cons
 	return Div_Mod(num1, num2, modulus);
 }
 
-size_t BigNumberUsingBits::Convert_String_to_Int_vector(string number_str, vector<int>& int_array)
+size_t BigNumberUsingBits::Convert_String_to_Int_vector()
 {
 	size_t str_pos = 0;
-	for (str_pos = 0 ; str_pos < number_str.size() ; str_pos++)
+	for (str_pos = 0; str_pos < this->BigNumberStr.size(); str_pos++)
 	{
-		int_array.push_back(number_str[str_pos] - '0');
+		this->number_vector.push_back(this->BigNumberStr[str_pos] - '0');
 	}
 	return str_pos;
 }
 
 //converting a vector representing a big unsigned int number into a vector
 //have the binary representation to the same number returning vector (MSB in Least)
-void BigNumberUsingBits::Convert_int_vector_to_binary_vector(vector<int>& int_vector, vector<int>& bin_vector)
+void BigNumberUsingBits::Convert_int_vector_to_binary_vector()
 {
-	vector<int> temp(int_vector);
+	vector<int> temp(this->number_vector);
 	vector<int> buffer;
 	int remainder = 0;
 	while (temp.size() >= 1)
@@ -218,11 +286,11 @@ void BigNumberUsingBits::Convert_int_vector_to_binary_vector(vector<int>& int_ve
 		remainder = Divide_int_vector_by_two(temp, buffer);
 		if (remainder)
 		{
-			bin_vector.push_back(1);//Least in Least
+			this->binary_vector.push_back(1);//Least in Least
 		}
 		else
 		{
-			bin_vector.push_back(0);//Least in Least
+			this->binary_vector.push_back(0);//Least in Least
 		}
 		temp = buffer;
 		buffer.clear();
@@ -366,7 +434,7 @@ void BigNumberUsingBits::Print_number_in_binary()
 	}
 	for (size_t i = 0; i < this->binary_vector.size() ; i++)
 	{
-		cout << this->binary_vector[i];
+		cout << static_cast<int>(this->binary_vector[i]);
 	}
 	cout << endl;
 }
@@ -432,4 +500,205 @@ BigNumberUsingBits BigNumberUsingBits::Div_Mod(const BigNumberUsingBits & num1, 
 	else{
 		return remainder;
 	}
+}
+
+string BigNumberUsingBits::ToHex()
+{
+	string converted_string;
+	size_t remaining_vector_elements;//must be >=4
+	char temp_hex_char = 0;
+	//
+	for (size_t vector_pos = 0 ; vector_pos < this->binary_vector.size() ; vector_pos+=4)
+	{
+		remaining_vector_elements = this->binary_vector.size() - vector_pos;
+		if (remaining_vector_elements < 4)
+		{
+			for (size_t i = 0; i < remaining_vector_elements; i++) 
+			{
+				if (i == 0) 
+				{
+					temp_hex_char += (this->binary_vector[vector_pos]);
+				}
+				else 
+				{
+					temp_hex_char += (this->binary_vector[vector_pos + i] * (i * 2));
+				}
+				
+			}
+			vector_pos = this->binary_vector.size();
+		}
+		else
+		{
+			temp_hex_char = (this->binary_vector[vector_pos + 0]	) +
+							(this->binary_vector[vector_pos + 1] * 2) +
+							(this->binary_vector[vector_pos + 2] * 4) +
+							(this->binary_vector[vector_pos + 3] * 8) ;
+		}
+		//
+		if (temp_hex_char >= 0 && temp_hex_char < 10)
+		{
+			temp_hex_char += '0';
+		}
+		else
+		{
+			temp_hex_char = (temp_hex_char - 10) + 'A';
+		}
+		//
+		converted_string.insert(converted_string.begin(), temp_hex_char);
+		temp_hex_char = 0;
+	}
+
+	return converted_string;
+}
+
+string BigNumberUsingBits::ToDecimal()
+{
+	//local variables
+	char temp_hex_char = 0;
+	int shift_counter = 0;
+	string converted_string;
+	size_t decimal_digit_place = 0;
+	//a copy of the this->binary_vector so we don't alter the binary_vector of the calling object.
+	vector<char> num_binary_vector_copy(this->binary_vector);
+	//4 element char vector used to initialize the whole vectors a muliplte of push_back(digit_bcd_vector)
+	vector<char> digit_bcd_vector(4, 0);
+	//whole num bcd vector should hold the bdc representation of the inputed binary vector
+	vector< vector<char> > whole_num_bcd_vector;
+	//temp obj i use to call some class methods
+	BigNumberUsingBits obj;
+
+	//double dabble alg.
+	//take the last bit in binary_vector to last pos in whole_num_bcd_vector  
+	whole_num_bcd_vector.push_back(digit_bcd_vector);
+
+	size_t bin_vec_copy_pos = num_binary_vector_copy.size()+1;
+
+	while ( num_binary_vector_copy.size() )
+	{	
+		//shift whole_num_bcd_vector to left aka [0]<-..[n-1]<-[n]
+		shift_whole_num_bcd_vector_left(whole_num_bcd_vector);
+		
+		//new bit
+		whole_num_bcd_vector[0][3] = num_binary_vector_copy[num_binary_vector_copy.size() - 1];
+
+		shift_counter++;
+
+		num_binary_vector_copy.pop_back();
+		if (shift_counter < this->binary_vector.size())
+		{
+			//check the current digit if >4 ? add 3 : move on()
+			update_bcd_digit_value_coressponding_to_its_current_value( whole_num_bcd_vector );
+		}
+		//
+		if (whole_num_bcd_vector[decimal_digit_place].front())
+		{
+			whole_num_bcd_vector.push_back(digit_bcd_vector);//pushing back zeros in packs of 4 corresponding to the expected bcd decimals outputed
+			decimal_digit_place++;
+		}
+	}
+	//checking if there are a leading zeroes (an inner vector extra full of zeroes not needed)
+	if (! (    whole_num_bcd_vector[whole_num_bcd_vector.size() - 1 ][ 0 ] && whole_num_bcd_vector[ whole_num_bcd_vector.size() - 1 ][ 1 ]
+			&& whole_num_bcd_vector[whole_num_bcd_vector.size() - 1 ][ 2 ] && whole_num_bcd_vector[ whole_num_bcd_vector.size() - 1 ][ 3 ]) ) {
+		whole_num_bcd_vector.pop_back();
+	}
+	///////////////////////////////////	
+	for (size_t vector_pos = whole_num_bcd_vector.size(); vector_pos > 0 ; vector_pos--)
+	{
+		temp_hex_char = ( whole_num_bcd_vector[vector_pos-1][0] * 8) +
+						( whole_num_bcd_vector[vector_pos-1][1] * 4) +
+						( whole_num_bcd_vector[vector_pos-1][2] * 2) +
+						( whole_num_bcd_vector[vector_pos-1][3] * 1) ;
+		//
+		if (temp_hex_char >= 0 && temp_hex_char < 10)
+		{
+			temp_hex_char += '0';
+		}
+		//converted_string.insert(converted_string.begin(), temp_hex_char);
+		converted_string.push_back(temp_hex_char);
+		temp_hex_char = 0;
+	}
+	return converted_string;
+}
+
+void BigNumberUsingBits::update_bcd_digit_value_coressponding_to_its_current_value( vector< vector<char> >& whole_num_bcd_vector )
+{
+	for (size_t whole_size = 0; whole_size < whole_num_bcd_vector.size(); whole_size++)
+	{
+		char temp_hex_char = 0;
+		//check the current digit if >4 ? add 3 : move on()
+		temp_hex_char = (whole_num_bcd_vector[whole_size][3]    ) +
+						(whole_num_bcd_vector[whole_size][2] * 2) +
+						(whole_num_bcd_vector[whole_size][1] * 4) +
+						(whole_num_bcd_vector[whole_size][0] * 8) ;
+		if (temp_hex_char > 4)
+		{
+			//	temp_hex_char += 3;
+			switch (temp_hex_char)
+			{
+			case 5://0101 + 11 = 1000
+				whole_num_bcd_vector[whole_size][0] = 1; whole_num_bcd_vector[whole_size][1] = 0;
+				whole_num_bcd_vector[whole_size][2] = 0; whole_num_bcd_vector[whole_size][3] = 0;
+				break;
+			case 6://0110 + 11 = 1001
+				whole_num_bcd_vector[whole_size][0] = 1; whole_num_bcd_vector[whole_size][1] = 0;
+				whole_num_bcd_vector[whole_size][2] = 0; whole_num_bcd_vector[whole_size][3] = 1;
+				break;
+			case 7://0111 + 11 = 1010
+				whole_num_bcd_vector[whole_size][0] = 1; whole_num_bcd_vector[whole_size][1] = 0;
+				whole_num_bcd_vector[whole_size][2] = 1; whole_num_bcd_vector[whole_size][3] = 0;
+				break;
+			case 8://1000 + 11 = 1011
+				whole_num_bcd_vector[whole_size][0] = 1; whole_num_bcd_vector[whole_size][1] = 0;
+				whole_num_bcd_vector[whole_size][2] = 1; whole_num_bcd_vector[whole_size][3] = 1;
+				break;
+			case 9://1001 + 11 = 1100
+				whole_num_bcd_vector[whole_size][0] = 1; whole_num_bcd_vector[whole_size][1] = 1;
+				whole_num_bcd_vector[whole_size][2] = 0; whole_num_bcd_vector[whole_size][3] = 0;
+				break;
+			}
+		}
+		temp_hex_char = 0;
+	}
+}
+
+void BigNumberUsingBits::shift_whole_num_bcd_vector_left(vector< vector<char> >& whole_num_bcd_vector)
+{
+ 	size_t number_of_bcd_digits = whole_num_bcd_vector.size();
+	size_t number_of_transitions_between_inner_vectors = whole_num_bcd_vector.size() - 1;
+
+	//loop from the end of whole_num_bcd_vector to first element
+	for (size_t whole_pos = number_of_bcd_digits ; whole_pos > 0; whole_pos--)//size-1 --> size-2 --> size-3 ..-->0
+	{
+		//three small shifting arrows
+		whole_num_bcd_vector[whole_pos - 1][0] = whole_num_bcd_vector[whole_pos - 1][1];
+		whole_num_bcd_vector[whole_pos - 1][1] = whole_num_bcd_vector[whole_pos - 1][2];
+		whole_num_bcd_vector[whole_pos - 1][2] = whole_num_bcd_vector[whole_pos - 1][3];
+		whole_num_bcd_vector[whole_pos - 1][3] = 0;
+		//
+		if ( (number_of_transitions_between_inner_vectors > 0) )
+		{
+			//the big shifting arrow from an inner vector[0] to the next inner vector[3]
+			whole_num_bcd_vector[whole_pos-1][3] = whole_num_bcd_vector[whole_pos-2][0];
+			whole_num_bcd_vector[whole_pos-2][0] = 0;
+			number_of_transitions_between_inner_vectors--;
+		}		
+	}
+}
+
+string BigNumberUsingBits::ToString()
+{
+	string converted_string;
+
+	char temp_hex_char = 0;
+	//
+	for (size_t vector_pos = 0 ; vector_pos < this->binary_vector.size() ; vector_pos++)
+	{
+		temp_hex_char = this->binary_vector[vector_pos];
+		//
+		temp_hex_char += '0';
+		//
+		converted_string.insert(converted_string.begin() , temp_hex_char);
+		temp_hex_char = 0;
+	}
+	return converted_string;
 }

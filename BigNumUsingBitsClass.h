@@ -17,7 +17,7 @@ public:
 	vector<int> number_vector;
 
 private:
-	vector<int> binary_vector;
+	vector<char> binary_vector;
 	string BigNumberStr;
 	bool negative_sign = false;
 
@@ -42,18 +42,29 @@ public:
 	BigNumberUsingBits Mod(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
 	BigNumberUsingBits operator%(const BigNumberUsingBits & num2);
 	
+	bool operator>(const BigNumberUsingBits & num2);
+	bool operator==(const BigNumberUsingBits & num2);
+	
+	string ToHex(void);
+	string ToDecimal(void);
+	string ToString(void);
+
 	//Print function reverse the vector so we can see the value in the correct order M in L 2(10)
 	void Print_number_in_binary();
 	int LongDivsion(vector<int>& int_array, vector<int>& quotient, int divisor);
 
 private:
 	//convert the string to int array and return the size of the int_array
-	size_t Convert_String_to_Int_vector(string number_str, vector<int>& int_array);
-	void Convert_int_vector_to_binary_vector(vector<int>& int_array, vector<int>& bin_array);
+	size_t Convert_String_to_Int_vector(void);
+
+	BigNumberUsingBits Div_Mod(const BigNumberUsingBits& num1, const BigNumberUsingBits & num2, operation mode);
+	void Convert_int_vector_to_binary_vector();
 	int Divide_int_vector_by_two(vector<int>& int_array, vector<int>& bin_array);
 	bool Isgreater(BigNumberUsingBits& num1, BigNumberUsingBits& num2);
 	bool IsGreaterOrEqual(BigNumberUsingBits & num1, BigNumberUsingBits & num2);
-	BigNumberUsingBits Div_Mod(const BigNumberUsingBits& num1, const BigNumberUsingBits & num2, operation mode);
 	bool Check_vector_all_zeros(vector<int>& vec_under_test);
-	
+	bool GreaterOnly(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
+	bool IsEqual(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
+	void update_bcd_digit_value_coressponding_to_its_current_value(vector< vector<char> >& whole_num_bcd_vector);
+	void shift_whole_num_bcd_vector_left(vector< vector<char> >& whole_num_bcd_vector);
 };
