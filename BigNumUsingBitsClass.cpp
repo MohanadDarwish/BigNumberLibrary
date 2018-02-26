@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "BigNumUsingBitsClass.h"
-//#include <algorithm>
 
 BigNumberUsingBits::BigNumberUsingBits()
 {
