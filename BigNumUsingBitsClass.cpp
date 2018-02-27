@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BigNumUsingBitsClass.h"
+#include <algorithm>
 
 BigNumberUsingBits::BigNumberUsingBits()
 {
@@ -62,6 +63,73 @@ BigNumberUsingBits BigNumberUsingBits::operator%(const BigNumberUsingBits & num2
 	BigNumberUsingBits result;
 	result = result.Mod(*this, num2);
 	return result;
+}
+
+BigNumberUsingBits BigNumberUsingBits::Pow(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)
+{
+	//base ^ power
+	//BigNumberUsingBits result("1");
+	//BigNumberUsingBits base(num1);
+	//BigNumberUsingBits power(num2);
+	//const BigNumberUsingBits one("1");
+	//const BigNumberUsingBits zero("0");
+	//if (power == zero) 
+	//{
+	//	result.binary_vector.clear();
+	//}
+	//else
+	//{
+	//	while (Isgreater(power, zero))
+	//	{
+	//		result = Mul(result, base);
+	//		//cout << result.binary_vector.size() << endl;
+	//		power = power - one;
+	//		//cout << power.ToDecimal() << endl;
+	//	}
+	//}
+	//return result;
+
+	BigNumberUsingBits result("1");
+	BigNumberUsingBits base(num1);
+	BigNumberUsingBits power(num2);
+	const BigNumberUsingBits one("1");
+	const BigNumberUsingBits zero("0");
+	const BigNumberUsingBits two("2");
+	if (power == zero)
+	{
+		return one;
+	}
+	else
+	{
+		//cout << "power :=  " << power.ToDecimal() << endl;
+		if (power == two)
+		{
+			//cout << power.ToDecimal() << endl;
+			return (base*base);
+		}
+		else if ( power.IsEven() ) 
+		{
+			//cout << " power/2 := " << (power / BigNumberUsingBits("2")).ToDecimal() << endl;
+			result = Pow( base , (power / BigNumberUsingBits("2")) );
+			result = result * result;
+			//cout << "result:= " <<result.ToDecimal() << endl;
+		}
+		else
+		{
+			//cout << " power/2 := " << (power - one).ToDecimal() << endl;
+			result = ( base * Pow( base , (power - one) ) );
+			//cout << "result:= " << result.ToDecimal() << endl;
+		}
+	}
+	return result;
+}
+
+void BigNumberUsingBits::operator=(const string& number_str)
+{
+	BigNumberUsingBits temp(number_str);
+	this->BigNumberStr = number_str;
+	this->binary_vector = temp.binary_vector;
+	this->number_vector = temp.number_vector;
 }
 
 bool BigNumberUsingBits::operator>(const BigNumberUsingBits & num2)
@@ -178,7 +246,7 @@ BigNumberUsingBits BigNumberUsingBits::Sub(const BigNumberUsingBits& num1, const
 	int number1_current_bit = 0 , number2_current_bit = 0;
 
 	//check which number is the smallest so we subtract the bigger one from the smaller
-	if (Isgreater(number1copy, number2copy))
+	if (Isgreater(number2copy , number1copy))
 	{
 		number1copy.binary_vector.swap(number2copy.binary_vector);
 		result.negative_sign = true;
@@ -320,27 +388,72 @@ int BigNumberUsingBits::Divide_int_vector_by_two(vector<int>& int_array, vector<
 }
 
 //starting from the MSB to LSB comparing this function works on binary representation (Least in Least)e.g. "2"="01" working on vectors (LSB in Least)
-//checks is num2 is greater than num1
-bool BigNumberUsingBits::Isgreater(BigNumberUsingBits & num1, BigNumberUsingBits & num2)
+//checks if num1 is greater than num2
+bool BigNumberUsingBits::Isgreater(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)
 {
+	BigNumberUsingBits num1_copy(num1);
+	BigNumberUsingBits num2_copy(num2);
 	bool greater = false;
-	size_t j = num2.binary_vector.size()-1;
+	size_t j = num1_copy.binary_vector.size()-1;
 
 	//check on size
-	if( num2.binary_vector.size() > num1.binary_vector.size() ) 
+	if(num1_copy.binary_vector.size() > num2_copy.binary_vector.size() )
 	{
 		greater = true;
 	}
-	else if (num2.binary_vector.size() == num1.binary_vector.size())
+	else if (num1_copy.binary_vector.size() == num2_copy.binary_vector.size())
 	{
-		for (j = num2.binary_vector.size() ; j > 0; j--)
+		for (j = num1_copy.binary_vector.size() ; j > 0 ; j--)
 		{
-			if (num2.binary_vector[j-1] > num1.binary_vector[j-1])
+			if (num1_copy.binary_vector[j-1] > num2_copy.binary_vector[j-1])
 			{
 				greater = true;
 				break;
 			}
-			else if (num2.binary_vector[j-1] < num1.binary_vector[j-1])
+			else if (num1_copy.binary_vector[j-1] < num2_copy.binary_vector[j-1])
+			{
+				break;
+			}
+		}
+	}
+	return greater;
+}
+
+bool BigNumberUsingBits::IsEven()
+{
+	if ( this->binary_vector[0] ) 
+	{
+		return false;
+	}
+	else 
+	{
+		return true;
+	}
+	
+}
+
+bool BigNumberUsingBits::IsSmaller(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits num2_copy(num2);
+	BigNumberUsingBits num1_copy(num1);
+	bool greater = false;
+	size_t j = num2_copy.binary_vector.size() - 1;
+
+	//check on size
+	if (num2_copy.binary_vector.size() > num1_copy.binary_vector.size())
+	{
+		greater = true;
+	}
+	else if (num2_copy.binary_vector.size() == num1_copy.binary_vector.size())
+	{
+		for (j = num2_copy.binary_vector.size(); j > 0; j--)
+		{
+			if (num2_copy.binary_vector[j - 1] > num1_copy.binary_vector[j - 1])
+			{
+				greater = true;
+				break;
+			}
+			else if (num2_copy.binary_vector[j - 1] < num1_copy.binary_vector[j - 1])
 			{
 				break;
 			}
@@ -463,7 +576,7 @@ BigNumberUsingBits BigNumberUsingBits::Div_Mod(const BigNumberUsingBits & num1, 
 	BigNumberUsingBits remainder("0");
 
 	size_t dividend_n_divisor_size_difference = 0;
-	if (Isgreater(dividend, divisor)) {
+	if (Isgreater(divisor , dividend)) {
 		return dividend;
 	}
 	//
@@ -472,7 +585,7 @@ BigNumberUsingBits BigNumberUsingBits::Div_Mod(const BigNumberUsingBits & num1, 
 		dividend_n_divisor_size_difference = dividend.binary_vector.size() - divisor.binary_vector.size();
 		divisor.binary_vector.insert(divisor.binary_vector.begin(), dividend_n_divisor_size_difference, 0);//y>>size
 		result.binary_vector.insert(result.binary_vector.begin(), dividend_n_divisor_size_difference, 0);//result=(1<<size)																	
-		if (Isgreater(dividend, divisor) && dividend_n_divisor_size_difference > 0) //if(y>x)
+		if (Isgreater(divisor , dividend) && dividend_n_divisor_size_difference > 0) //if(y>x)
 		{
 			result.binary_vector.clear();
 			result.binary_vector.insert(result.binary_vector.begin(), 1);
@@ -596,8 +709,8 @@ string BigNumberUsingBits::ToDecimal()
 		}
 	}
 	//checking if there are a leading zeroes (an inner vector extra full of zeroes not needed)
-	if (! (    whole_num_bcd_vector[whole_num_bcd_vector.size() - 1 ][ 0 ] && whole_num_bcd_vector[ whole_num_bcd_vector.size() - 1 ][ 1 ]
-			&& whole_num_bcd_vector[whole_num_bcd_vector.size() - 1 ][ 2 ] && whole_num_bcd_vector[ whole_num_bcd_vector.size() - 1 ][ 3 ]) ) {
+	if (!( whole_num_bcd_vector[whole_num_bcd_vector.size() - 1 ][ 0 ] + whole_num_bcd_vector[ whole_num_bcd_vector.size() - 1 ][ 1 ]+
+		 whole_num_bcd_vector[whole_num_bcd_vector.size() - 1 ][ 2 ] + whole_num_bcd_vector[ whole_num_bcd_vector.size() - 1 ][ 3 ] ) ){
 		whole_num_bcd_vector.pop_back();
 	}
 	///////////////////////////////////	

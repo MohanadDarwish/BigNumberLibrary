@@ -27,6 +27,9 @@ public:
 	BigNumberUsingBits(const BigNumberUsingBits& obj);
 	~BigNumberUsingBits();
 	
+	bool operator>(const BigNumberUsingBits & num2);
+	bool operator==(const BigNumberUsingBits & num2);
+
 	BigNumberUsingBits Add(const BigNumberUsingBits&num1, const BigNumberUsingBits&num2);
 	BigNumberUsingBits operator+(const BigNumberUsingBits & num2 );
 	
@@ -42,8 +45,11 @@ public:
 	BigNumberUsingBits Mod(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
 	BigNumberUsingBits operator%(const BigNumberUsingBits & num2);
 	
-	bool operator>(const BigNumberUsingBits & num2);
-	bool operator==(const BigNumberUsingBits & num2);
+	BigNumberUsingBits Pow(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
+
+	void operator=(const string& value);
+
+	
 	
 	string ToHex(void);
 	string ToDecimal(void);
@@ -59,9 +65,13 @@ private:
 
 	BigNumberUsingBits Div_Mod(const BigNumberUsingBits& num1, const BigNumberUsingBits & num2, operation mode);
 	void Convert_int_vector_to_binary_vector();
+
 	int Divide_int_vector_by_two(vector<int>& int_array, vector<int>& bin_array);
-	bool Isgreater(BigNumberUsingBits& num1, BigNumberUsingBits& num2);
+	bool Isgreater(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
+	bool IsEven(void);
+	bool IsSmaller(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
 	bool IsGreaterOrEqual(BigNumberUsingBits & num1, BigNumberUsingBits & num2);
+
 	bool Check_vector_all_zeros(vector<int>& vec_under_test);
 	bool GreaterOnly(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
 	bool IsEqual(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
