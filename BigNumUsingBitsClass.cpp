@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "BigNumUsingBitsClass.h"
-#include <algorithm>
 
 BigNumberUsingBits::BigNumberUsingBits()
 {
@@ -15,9 +14,9 @@ BigNumberUsingBits::BigNumberUsingBits(const BigNumberUsingBits& obj)
 		this->binary_vector.push_back( obj.binary_vector[size] );
 	}
 
-	for (size_t size = 0 ; size < obj.number_vector.size() ; size++) 
+	for (size_t size = 0 ; size < obj.decimal_vector.size() ; size++) 
 	{
-		this->number_vector.push_back( obj.number_vector[size] );
+		this->decimal_vector.push_back( obj.decimal_vector[size] );
 	}
 }
 BigNumberUsingBits::BigNumberUsingBits(string number_string)
@@ -65,71 +64,20 @@ BigNumberUsingBits BigNumberUsingBits::operator%(const BigNumberUsingBits & num2
 	return result;
 }
 
-BigNumberUsingBits BigNumberUsingBits::Pow(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)
-{
-	//base ^ power
-	//BigNumberUsingBits result("1");
-	//BigNumberUsingBits base(num1);
-	//BigNumberUsingBits power(num2);
-	//const BigNumberUsingBits one("1");
-	//const BigNumberUsingBits zero("0");
-	//if (power == zero) 
-	//{
-	//	result.binary_vector.clear();
-	//}
-	//else
-	//{
-	//	while (Isgreater(power, zero))
-	//	{
-	//		result = Mul(result, base);
-	//		//cout << result.binary_vector.size() << endl;
-	//		power = power - one;
-	//		//cout << power.ToDecimal() << endl;
-	//	}
-	//}
-	//return result;
-
-	BigNumberUsingBits result("1");
-	BigNumberUsingBits base(num1);
-	BigNumberUsingBits power(num2);
-	const BigNumberUsingBits one("1");
-	const BigNumberUsingBits zero("0");
-	const BigNumberUsingBits two("2");
-	if (power == zero)
-	{
-		return one;
-	}
-	else
-	{
-		//cout << "power :=  " << power.ToDecimal() << endl;
-		if (power == two)
-		{
-			//cout << power.ToDecimal() << endl;
-			return (base*base);
-		}
-		else if ( power.IsEven() ) 
-		{
-			//cout << " power/2 := " << (power / BigNumberUsingBits("2")).ToDecimal() << endl;
-			result = Pow( base , (power / BigNumberUsingBits("2")) );
-			result = result * result;
-			//cout << "result:= " <<result.ToDecimal() << endl;
-		}
-		else
-		{
-			//cout << " power/2 := " << (power - one).ToDecimal() << endl;
-			result = ( base * Pow( base , (power - one) ) );
-			//cout << "result:= " << result.ToDecimal() << endl;
-		}
-	}
-	return result;
-}
 
 void BigNumberUsingBits::operator=(const string& number_str)
 {
 	BigNumberUsingBits temp(number_str);
 	this->BigNumberStr = number_str;
 	this->binary_vector = temp.binary_vector;
-	this->number_vector = temp.number_vector;
+	this->decimal_vector = temp.decimal_vector;
+}
+
+void BigNumberUsingBits::operator++(int)
+{
+	BigNumberUsingBits one("1");
+	*this = *this + one;
+	
 }
 
 bool BigNumberUsingBits::operator>(const BigNumberUsingBits & num2)
@@ -138,6 +86,15 @@ bool BigNumberUsingBits::operator>(const BigNumberUsingBits & num2)
 	bool comparison_result;
 
 	comparison_result = result.GreaterOnly(*this, num2);
+	return comparison_result;
+}
+
+bool BigNumberUsingBits::operator<(const BigNumberUsingBits & num2)
+{
+	BigNumberUsingBits result;
+	bool comparison_result;
+
+	comparison_result = result.IsSmaller(*this, num2);
 	return comparison_result;
 }
 
@@ -204,27 +161,29 @@ bool BigNumberUsingBits::IsEqual(const BigNumberUsingBits & num1, const BigNumbe
 BigNumberUsingBits BigNumberUsingBits::Add(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)//, BigNumberUsingBits & result)
 {
 	BigNumberUsingBits result;
-	int i = 0, j = 0;
+	BigNumberUsingBits num1_copy(num1);
+	BigNumberUsingBits num2_copy(num2);
+	int num1_pos = 0, num2_pos = 0;
 	int carry = 0;
 
-	while ((i < num1.binary_vector.size()) || (j < num2.binary_vector.size()))//loop on the 1st number till ends
+	while ( (num1_pos < num1_copy.binary_vector.size()) || (num2_pos < num2_copy.binary_vector.size()) )//loop on the 1st number till ends
 	{
-		if (i >= num1.binary_vector.size())
+		if (num1_pos >= num1_copy.binary_vector.size() )
 		{
-			result.binary_vector.insert(result.binary_vector.begin(), ((num2.binary_vector[j] + carry) % 2 ));
-			carry = (num2.binary_vector[j]+carry) / 2;
+			result.binary_vector.insert(result.binary_vector.begin(), ((num2_copy.binary_vector[num2_pos] + carry) % 2 ));
+			carry = (num2_copy.binary_vector[num2_pos]+carry) / 2;
 		}
-		else if (j >= num2.binary_vector.size())
+		else if (num2_pos >= num2.binary_vector.size() )
 		{
-			result.binary_vector.insert(result.binary_vector.begin(), ((num1.binary_vector[i] + carry) % 2 ));
-			carry = (num1.binary_vector[i] + carry) / 2;
+			result.binary_vector.insert(result.binary_vector.begin(), ((num1_copy.binary_vector[num1_pos] + carry) % 2 ));
+			carry = (num1_copy.binary_vector[num1_pos] + carry) / 2;
 		}
 		else
 		{
-			result.binary_vector.insert(result.binary_vector.begin(), ((num1.binary_vector[i] + num2.binary_vector[j] + carry) % 2 ));
-			carry = (num1.binary_vector[i] + num2.binary_vector[j]+carry) / 2;
+			result.binary_vector.insert(result.binary_vector.begin(), ((num1_copy.binary_vector[num1_pos] + num2_copy.binary_vector[num2_pos] + carry) % 2 ));
+			carry = (num1_copy.binary_vector[num1_pos] + num2_copy.binary_vector[num2_pos]+carry) / 2;
 		}
-		i++; j++;
+		num1_pos++; num2_pos++;
 	}
 
 	//handling the possible carry case
@@ -305,38 +264,110 @@ BigNumberUsingBits BigNumberUsingBits::Sub(const BigNumberUsingBits& num1, const
 
 BigNumberUsingBits BigNumberUsingBits::Mul(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)
 {
-	BigNumberUsingBits multiplicand = num1;
-	BigNumberUsingBits multiplier = num2;
+	BigNumberUsingBits multiplicand(num1);
+	BigNumberUsingBits multiplier(num2);
 	BigNumberUsingBits product;
+	size_t multiplier_size = multiplier.binary_vector.size();
 	//looping on the binary_vector
-	for (size_t size = 0 ; size < multiplier.binary_vector.size() ; size++ )
+	for (size_t size = 0 ; size < multiplier_size; size++ )
 	{
 		if (multiplier.binary_vector[size] == 1) 
 		{
 			multiplicand.binary_vector.insert(multiplicand.binary_vector.begin() , size , 0);
-			product = product.Add(product, multiplicand);
+			product = product + multiplicand;//product = product.Add(product, multiplicand);
 			multiplicand = num1;
 		}
 	}
 	return product;
 }
 
-BigNumberUsingBits BigNumberUsingBits::Div(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2 )
+BigNumberUsingBits BigNumberUsingBits::Div(const BigNumberUsingBits & num1 , const BigNumberUsingBits & num2 )
 {
 	return Div_Mod(num1, num2, divsion);
 }
 
-BigNumberUsingBits BigNumberUsingBits::Mod(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2)
+BigNumberUsingBits BigNumberUsingBits::Mod(const BigNumberUsingBits & num1 , const BigNumberUsingBits & num2)
 {
 	return Div_Mod(num1, num2, modulus);
 }
 
+BigNumberUsingBits BigNumberUsingBits::Pow(const BigNumberUsingBits & base , const BigNumberUsingBits & exponent)
+{
+	//base ^ power
+	//BigNumberUsingBits result("1");
+	//BigNumberUsingBits base(num1);
+	//BigNumberUsingBits power(num2);
+	//const BigNumberUsingBits one("1");
+	//const BigNumberUsingBits zero("0");
+	//if (power == zero) 
+	//{
+	//	result.binary_vector.clear();
+	//}
+	//else
+	//{
+	//	while (Isgreater(power, zero))
+	//	{
+	//		result = Mul(result, base);
+	//		//cout << result.binary_vector.size() << endl;
+	//		power = power - one;
+	//		//cout << power.ToDecimal() << endl;
+	//	}
+	//}
+	//return result;
+
+	BigNumberUsingBits result("1");
+	BigNumberUsingBits base_copy(base);
+	BigNumberUsingBits exponent_copy(exponent);
+	const BigNumberUsingBits zero("0");
+	const BigNumberUsingBits one("1");
+	const BigNumberUsingBits two("2");
+	if (exponent_copy == zero)
+	{
+		return one;
+	}
+	else
+	{
+		//cout << "power :=  " << power.ToDecimal() << endl;
+		if (exponent_copy == two)
+		{
+			return (base_copy*base_copy);
+		}
+		else if (exponent_copy.IsEven())
+		{
+			result = Pow(base_copy, (exponent_copy / BigNumberUsingBits("2") ) );
+			result = result * result;
+		}
+		else
+		{
+			result = (base_copy * Pow(base_copy, (exponent_copy - one) ) );
+		}
+	}
+	return result;
+}
+
+BigNumberUsingBits BigNumberUsingBits::PowMod(const BigNumberUsingBits & base , const BigNumberUsingBits & exponent, const BigNumberUsingBits&modulus)
+{
+	BigNumberUsingBits base_copy(base);
+	BigNumberUsingBits exponent_copy(exponent);
+	BigNumberUsingBits modulus_copy(modulus);
+	
+	//c=b^e(mod m)
+	BigNumberUsingBits exponent_temp("0");
+	BigNumberUsingBits result("1");
+	
+	do{
+		exponent_temp++;
+		result = (base_copy*result) % modulus_copy;
+	} while (exponent_temp < exponent_copy);
+
+	return result;
+}
 size_t BigNumberUsingBits::Convert_String_to_Int_vector()
 {
 	size_t str_pos = 0;
 	for (str_pos = 0; str_pos < this->BigNumberStr.size(); str_pos++)
 	{
-		this->number_vector.push_back(this->BigNumberStr[str_pos] - '0');
+		this->decimal_vector.push_back(this->BigNumberStr[str_pos] - '0');
 	}
 	return str_pos;
 }
@@ -345,7 +376,7 @@ size_t BigNumberUsingBits::Convert_String_to_Int_vector()
 //have the binary representation to the same number returning vector (MSB in Least)
 void BigNumberUsingBits::Convert_int_vector_to_binary_vector()
 {
-	vector<int> temp(this->number_vector);
+	vector<int> temp(this->decimal_vector);
 	vector<int> buffer;
 	int remainder = 0;
 	while (temp.size() >= 1)
@@ -436,13 +467,13 @@ bool BigNumberUsingBits::IsSmaller(const BigNumberUsingBits & num1, const BigNum
 {
 	BigNumberUsingBits num2_copy(num2);
 	BigNumberUsingBits num1_copy(num1);
-	bool greater = false;
+	bool smaller = false;
 	size_t j = num2_copy.binary_vector.size() - 1;
 
 	//check on size
 	if (num2_copy.binary_vector.size() > num1_copy.binary_vector.size())
 	{
-		greater = true;
+		smaller = true;
 	}
 	else if (num2_copy.binary_vector.size() == num1_copy.binary_vector.size())
 	{
@@ -450,7 +481,7 @@ bool BigNumberUsingBits::IsSmaller(const BigNumberUsingBits & num1, const BigNum
 		{
 			if (num2_copy.binary_vector[j - 1] > num1_copy.binary_vector[j - 1])
 			{
-				greater = true;
+				smaller = true;
 				break;
 			}
 			else if (num2_copy.binary_vector[j - 1] < num1_copy.binary_vector[j - 1])
@@ -459,7 +490,7 @@ bool BigNumberUsingBits::IsSmaller(const BigNumberUsingBits & num1, const BigNum
 			}
 		}
 	}
-	return greater;
+	return smaller;
 }
 
 //starting from the MSB to LSB comparing this function works on binary representation (Least in Least)e.g. "2"="01" working on vectors (LSB in Least)
@@ -612,6 +643,24 @@ BigNumberUsingBits BigNumberUsingBits::Div_Mod(const BigNumberUsingBits & num1, 
 	else{
 		return remainder;
 	}
+}
+
+string BigNumberUsingBits::ToString()
+{
+	string converted_string;
+
+	char temp_hex_char = 0;
+	//
+	for (size_t vector_pos = 0; vector_pos < this->binary_vector.size(); vector_pos++)
+	{
+		temp_hex_char = this->binary_vector[vector_pos];
+		//
+		temp_hex_char += '0';
+		//
+		converted_string.insert(converted_string.begin(), temp_hex_char);
+		temp_hex_char = 0;
+	}
+	return converted_string;
 }
 
 string BigNumberUsingBits::ToHex()
@@ -797,20 +846,3 @@ void BigNumberUsingBits::shift_whole_num_bcd_vector_left(vector< vector<char> >&
 	}
 }
 
-string BigNumberUsingBits::ToString()
-{
-	string converted_string;
-
-	char temp_hex_char = 0;
-	//
-	for (size_t vector_pos = 0 ; vector_pos < this->binary_vector.size() ; vector_pos++)
-	{
-		temp_hex_char = this->binary_vector[vector_pos];
-		//
-		temp_hex_char += '0';
-		//
-		converted_string.insert(converted_string.begin() , temp_hex_char);
-		temp_hex_char = 0;
-	}
-	return converted_string;
-}

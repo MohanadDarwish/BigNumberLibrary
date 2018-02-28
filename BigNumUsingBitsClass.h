@@ -3,7 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-
+#include <algorithm>
 using namespace std;
 
 typedef enum {	
@@ -14,7 +14,7 @@ typedef enum {
 class BigNumberUsingBits
 {
 public:
-	vector<int> number_vector;
+	vector<int> decimal_vector;
 
 private:
 	vector<char> binary_vector;
@@ -28,6 +28,7 @@ public:
 	~BigNumberUsingBits();
 	
 	bool operator>(const BigNumberUsingBits & num2);
+	bool operator<(const BigNumberUsingBits & num2);
 	bool operator==(const BigNumberUsingBits & num2);
 
 	BigNumberUsingBits Add(const BigNumberUsingBits&num1, const BigNumberUsingBits&num2);
@@ -45,11 +46,12 @@ public:
 	BigNumberUsingBits Mod(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
 	BigNumberUsingBits operator%(const BigNumberUsingBits & num2);
 	
-	BigNumberUsingBits Pow(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
+	BigNumberUsingBits Pow(const BigNumberUsingBits & base, const BigNumberUsingBits & exponent);
 
-	void operator=(const string& value);
-
+	BigNumberUsingBits PowMod(const BigNumberUsingBits & base, const BigNumberUsingBits & exponent, const BigNumberUsingBits&modulus);
 	
+	void operator=(const string& value);
+	void operator++(int);
 	
 	string ToHex(void);
 	string ToDecimal(void);
