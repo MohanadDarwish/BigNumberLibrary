@@ -1,9 +1,11 @@
 #pragma once
 #include <string>
 #include <iostream>
-#include <algorithm>
 #include <vector>
 #include <algorithm>
+#include <random>
+#include <openssl\bn.h>
+
 using namespace std;
 
 typedef enum {	
@@ -14,7 +16,7 @@ typedef enum {
 class BigNumberUsingBits
 {
 public:
-	vector<int> decimal_vector;
+	vector<char> decimal_vector;
 
 private:
 	vector<char> binary_vector;
@@ -58,8 +60,12 @@ public:
 	string ToString(void);
 
 	//Print function reverse the vector so we can see the value in the correct order M in L 2(10)
-	void Print_number_in_binary();
+	void Print_number_in_binary_vector();
+	void Print_number_in_decimal_vector();
 	int LongDivsion(vector<int>& int_array, vector<int>& quotient, int divisor);
+
+	void generate_random_bignumber(unsigned long long length);
+	void generate_prime_bignumber(unsigned long long length);
 
 private:
 	//convert the string to int array and return the size of the int_array
@@ -68,7 +74,7 @@ private:
 	BigNumberUsingBits Div_Mod(const BigNumberUsingBits& num1, const BigNumberUsingBits & num2, operation mode);
 	void Convert_int_vector_to_binary_vector();
 
-	int Divide_int_vector_by_two(vector<int>& int_array, vector<int>& bin_array);
+	int Divide_int_vector_by_two(vector<char>& int_array, vector<char>& bin_array);
 	bool Isgreater(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
 	bool IsEven(void);
 	bool IsSmaller(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
@@ -79,4 +85,5 @@ private:
 	bool IsEqual(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
 	void update_bcd_digit_value_coressponding_to_its_current_value(vector< vector<char> >& whole_num_bcd_vector);
 	void shift_whole_num_bcd_vector_left(vector< vector<char> >& whole_num_bcd_vector);
+	
 };

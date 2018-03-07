@@ -64,7 +64,6 @@ BigNumberUsingBits BigNumberUsingBits::operator%(const BigNumberUsingBits & num2
 	return result;
 }
 
-
 void BigNumberUsingBits::operator=(const string& number_str)
 {
 	BigNumberUsingBits temp(number_str);
@@ -376,8 +375,8 @@ size_t BigNumberUsingBits::Convert_String_to_Int_vector()
 //have the binary representation to the same number returning vector (MSB in Least)
 void BigNumberUsingBits::Convert_int_vector_to_binary_vector()
 {
-	vector<int> temp(this->decimal_vector);
-	vector<int> buffer;
+	vector<char> temp(this->decimal_vector);
+	vector<char> buffer;
 	int remainder = 0;
 	while (temp.size() >= 1)
 	{
@@ -396,7 +395,7 @@ void BigNumberUsingBits::Convert_int_vector_to_binary_vector()
 }
 
 //Divide a big uint number by 2 takes int vector and quotient vector to be filled and returns the result remainder
-int BigNumberUsingBits::Divide_int_vector_by_two(vector<int>& int_array, vector<int>& quotient)
+int BigNumberUsingBits::Divide_int_vector_by_two(vector<char>& int_array, vector<char>& quotient)
 {
 	//converting a decimal number having each digit in a different vector element
 	//to another binary vector having each bit from the binary representation of the int vector 
@@ -569,8 +568,11 @@ int BigNumberUsingBits::LongDivsion(vector<int>& int_array, vector<int>& quotien
 }
 
 //printing the binary vector in BigNumberUsingBits object from Least to Most i=0 i++
-void BigNumberUsingBits::Print_number_in_binary()
+void BigNumberUsingBits::Print_number_in_binary_vector()
 {
+	if (this->binary_vector.size() == 0) {
+		this->Convert_int_vector_to_binary_vector();
+	}
 	if (this->negative_sign == true)
 	{
 		cout << "-";
@@ -578,6 +580,15 @@ void BigNumberUsingBits::Print_number_in_binary()
 	for (size_t i = 0; i < this->binary_vector.size() ; i++)
 	{
 		cout << static_cast<int>(this->binary_vector[i]);
+	}
+	cout << endl;
+}
+
+void BigNumberUsingBits::Print_number_in_decimal_vector()
+{
+	for (size_t  i = 0; i < this->decimal_vector.size() ; i++)
+	{
+		cout<< static_cast<char>(this->decimal_vector[i] + '0');
 	}
 	cout << endl;
 }
@@ -778,6 +789,11 @@ string BigNumberUsingBits::ToDecimal()
 		converted_string.push_back(temp_hex_char);
 		temp_hex_char = 0;
 	}
+	
+	
+	this->BigNumberStr = converted_string;
+	this->Convert_String_to_Int_vector();
+
 	return converted_string;
 }
 
@@ -846,3 +862,51 @@ void BigNumberUsingBits::shift_whole_num_bcd_vector_left(vector< vector<char> >&
 	}
 }
 
+void BigNumberUsingBits::generate_prime_bignumber(unsigned long long length) 
+{
+	BIGNUM *bn = NULL;
+	BIGNUM *bn2 = NULL;
+	BIGNUM **bn_ptr = &bn;
+	BIGNUM **bn2_ptr = &bn2;
+	BIGNUM *add = NULL;
+	BIGNUM *rem = NULL;
+	BN_GENCB * cb = NULL;
+	char* buf_ptr = NULL;
+	bn = BN_new();
+	bn2= BN_new();
+	BN_init(bn);
+	BN_init(bn2);
+	BN_generate_prime_ex(bn, 2*8, 1, NULL, NULL, NULL);
+	random_device rd;
+	mt19937 mt(rd());
+	uniform_int_distribution<int> dist(0, 9);
+	for (unsigned long long i = 0; i < length; i++)
+	{
+		this->decimal_vector.push_back(dist(mt));
+	}
+	this->Convert_int_vector_to_binary_vector();
+	//make sure bit no.0 is 1 "odd number" &0x01
+	this->binary_vector[0] = 1;
+	//check if the number is prime
+	while (  BN_is_prime_ex(bn2, 1/*BN_prime_checks*/,NULL,NULL) == 0 )
+	{
+		//if not add 2 (+2) then check again
+		*this = *this + BigNumberUsingBits("2");
+		this->ToDecimal();
+		const char* cstr = (this->BigNumberStr).c_str();
+		BN_dec2bn(bn2_ptr, cstr);
+	}
+
+}
+void BigNumberUsingBits::generate_random_bignumber(unsigned long long length)
+{
+	//generate random big number using <random> in c++11
+	random_device rd;
+	mt19937 mt( rd() );
+	uniform_int_distribution<int> dist(0, 9);
+	for (unsigned long long i = 0 ; i < length ; i++) 
+	{
+		this->decimal_vector.push_back(dist(mt));
+	}
+	this->Convert_int_vector_to_binary_vector();
+}
