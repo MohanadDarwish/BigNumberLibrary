@@ -69,12 +69,12 @@ public:
 
 private:
 	//convert the string to int array and return the size of the int_array
-	size_t Convert_String_to_Int_vector(void);
+	size_t Convert_String_to_Decimal_vector(void);
 
-	BigNumberUsingBits Div_Mod(const BigNumberUsingBits& num1, const BigNumberUsingBits & num2, operation mode);
-	void Convert_int_vector_to_binary_vector();
+	BigNumberUsingBits Div_Mod( const BigNumberUsingBits & num1, const BigNumberUsingBits & num2, operation mode);
+	void Convert_Decimal_vector_to_Binary_vector();
 
-	int Divide_int_vector_by_two(vector<char>& int_array, vector<char>& bin_array);
+	int Divide_Decimal_vector_by_Two(vector<char>& decimal_array, vector<char>& bin_array);
 	bool Isgreater(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
 	bool IsEven(void);
 	bool IsSmaller(const BigNumberUsingBits & num1, const BigNumberUsingBits & num2);
@@ -83,7 +83,7 @@ private:
 	bool Check_vector_all_zeros(vector<int>& vec_under_test);
 	bool GreaterOnly(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
 	bool IsEqual(const BigNumberUsingBits& num1, const BigNumberUsingBits& num2);
-	void update_bcd_digit_value_coressponding_to_its_current_value(vector< vector<char> >& whole_num_bcd_vector);
+	void update_bcd_digit_value_coressponding_to_its_current_value( vector< vector<char> >& whole_num_bcd_vector);
 	void shift_whole_num_bcd_vector_left(vector< vector<char> >& whole_num_bcd_vector);
 	
 };
